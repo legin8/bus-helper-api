@@ -18,6 +18,11 @@
   },
   "homepage": "https://github.com/legin8/bus-helper-api#readme",
   "dependencies": {
+    "@prisma/client": "^4.13.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "prisma": "^4.13.0"
   }
 }
