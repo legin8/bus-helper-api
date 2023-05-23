@@ -1,6 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+const routeExample = {
+  "number": "33",
+  "name": "Corstorphine, Caversham, Hub, Wakari",
+  "key": 1
+}
+
 export const getRoutes = async (req, res) => {
   try {
     const routes = await prisma.route.findMany({
@@ -10,7 +16,10 @@ export const getRoutes = async (req, res) => {
     });
 
     if (routes.length === 0) {
-      return res.status(200).json({ msg: "No routes found" });
+      return res.status(200).json({ 
+        msg: "No routes found",
+        example: routeExample
+       });
     }
 
     return res.json({ data: routes });
