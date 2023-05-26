@@ -10,10 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Agency {
+  code          String    @id @unique
+  region        String
+  url           String
+  phone         String
+  routes        Route[]
+}
+
 model Route {
   title           String    @id @unique
   locations       String
   key             Int       @unique
+  agencyCode      String
+  agency          Agency    @relation(fields: [agencyCode], references: [code])
   services        Service[]
 }
 
@@ -23,4 +33,40 @@ model Service {
   routeTitle      String
   key 	          Int
   route           Route     @relation(fields: [routeTitle], references: [title])
+  trips           Trip[]
+}
+
+model Trip {
+  serviceCode     String
+  id              Int
+  name            String
+  service         Service @relation(fields: [serviceCode], references: [code])
+  times           Times[]
+  @@id([serviceCode, id])
+}
+
+model Times {
+  serviceCode      String
+  tripId           Int
+  time             String
+  trip             Trip    @relation(fields: [tripId, serviceCode], references: [id, serviceCode])
+  timeStop         TimeStop[]
+  @@id([serviceCode, tripId])
+}
+
+model TimeStop {
+  serviceCode     String
+  tripId          Int
+  stopsCode       String
+  time            Times     @relation(fields: [serviceCode, tripId], references: [serviceCode, tripId])
+  stop            Stops     @relation(fields: [stopsCode], references: [code])
+  @@id([serviceCode, tripId, stopsCode])
+}
+
+model Stops {
+  code            String  @id
+  id              Int
+  name            String
+  stopAlias       String?
+  timeStop        TimeStop[]
 }
