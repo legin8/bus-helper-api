@@ -19,10 +19,10 @@ export const getServices = async (req, res) => {
 
 export const createService = async (req, res) => {
   try {
-    const { code, name, routeNumber, key } = req.body;
+    const { code, name, routeTitle, key } = req.body;
 
     await prisma.service.create({
-      data: { code, name, routeNumber, key },
+      data: { code, name, routeTitle, key },
     });
 
     const newServices = await prisma.service.findMany();
@@ -41,7 +41,7 @@ export const createService = async (req, res) => {
 export const updateService = async (req, res) => {
   try {
     const { code } = req.params;
-    const { name, routeNumber, key } = req.body;
+    const { name, routeTitle, key } = req.body;
 
     let service = await prisma.service.findUnique({
       where: { code: String(code) },
@@ -55,7 +55,7 @@ export const updateService = async (req, res) => {
 
     service = await prisma.service.update({
       where: { code: String(code) },
-      data: { name, routeNumber, key },
+      data: { name, routeTitle, key },
     });
 
     return res.json({

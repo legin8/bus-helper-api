@@ -11,8 +11,8 @@ datasource db {
 }
 
 model Route {
-  number          String    @id @unique
-  name            String
+  title           String    @id @unique
+  locations       String
   key             Int       @unique
   services        Service[]
 }
@@ -20,7 +20,7 @@ model Route {
 model Service {
   code            String    @id @unique
   name            String
-  routeNumber     String
+  routeTitle      String
   key 	          Int
-  route           Route     @relation(fields: [routeNumber], references: [number])
+  route           Route     @relation(fields: [routeTitle], references: [title])
 }

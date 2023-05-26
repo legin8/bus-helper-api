@@ -2,8 +2,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const routeExample = {
-  "number": "33",
-  "name": "Corstorphine, Caversham, Hub, Wakari",
+  "title": "33",
+  "locations": "Corstorphine, Caversham, Hub, Wakari",
   "key": 1
 }
 
@@ -32,10 +32,10 @@ export const getRoutes = async (req, res) => {
 
 export const createRoute = async (req, res) => {
   try {
-    const { number, name, key } = req.body;
+    const { title, locations, key } = req.body;
 
     await prisma.route.create({
-      data: { number, name, key },
+      data: { title, locations, key },
     });
 
     const newRoutes = await prisma.route.findMany({
@@ -57,26 +57,26 @@ export const createRoute = async (req, res) => {
 
 export const updateRoute = async (req, res) => {
   try {
-    const { number } = req.params;
-    const { name, key } = req.body;
+    const { title } = req.params;
+    const { locations, key } = req.body;
 
     let route = await prisma.route.findUnique({
-      where: { number: String(number) },
+      where: { title: String(title) },
     });
 
     if (!route) {
       return res
         .status(201)
-        .json({ msg: `No route with the number: ${number} found` });
+        .json({ msg: `No route with the title: ${title} found` });
     }
 
     route = await prisma.route.update({
-      where: { number: String(number) },
-      data: { name, key },
+      where: { title: String(title) },
+      data: { locations, key },
     });
 
     return res.json({
-      msg: `Route with the number: ${number} successfully updated`,
+      msg: `Route with the title: ${title} successfully updated`,
       data: route,
     });
   } catch (err) {
@@ -88,24 +88,24 @@ export const updateRoute = async (req, res) => {
 
 export const deleteRoute = async (req, res) => {
   try {
-    const { number } = req.params;
+    const { title } = req.params;
 
     const route = await prisma.route.findUnique({
-      where: { number: String(number) },
+      where: { title: String(title) },
     });
 
     if (!route) {
       return res
         .status(200)
-        .json({ msg: `No route with the number: ${number} found` });
+        .json({ msg: `No route with the title: ${title} found` });
     }
 
     await prisma.route.delete({
-      where: { number: String(number) },
+      where: { title: String(title) },
     });
 
     return res.json({
-      msg: `Route with the number: ${number} successfully deleted`,
+      msg: `Route with the title: ${title} successfully deleted`,
     });
   } catch (err) {
     return res.status(500).json({
@@ -116,16 +116,16 @@ export const deleteRoute = async (req, res) => {
 
 export const getRoute = async (req, res) => {
   try {
-    const { number } = req.params;
+    const { title } = req.params;
 
     const route = await prisma.route.findUnique({
-      where: { number: String(number) },
+      where: { title: String(title) },
     });
 
     if (!route) {
       return res
         .status(200)
-        .json({ msg: `No route with the number: ${number} found` });
+        .json({ msg: `No route with the title: ${title} found` });
     }
 
     return res.json({
