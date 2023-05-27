@@ -49,12 +49,13 @@ model Times {
   serviceCode      String
   tripId           Int
   time             String
+  stopsCode        String
   trip             Trip    @relation(fields: [tripId, serviceCode], references: [id, serviceCode])
-  timeStop         TimeStop[]
+  timeStop         TimesStops[]
   @@id([serviceCode, tripId])
 }
 
-model TimeStop {
+model TimesStops {
   serviceCode     String
   tripId          Int
   stopsCode       String
@@ -68,5 +69,5 @@ model Stops {
   id              Int
   name            String
   stopAlias       String?
-  timeStop        TimeStop[]
+  timeStop        TimesStops[]
 }
