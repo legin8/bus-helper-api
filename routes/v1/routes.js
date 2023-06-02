@@ -1,7 +1,13 @@
 import { Router } from "express";
 const router = Router();
 
-import { getRoute, getRoutes, createRoute, updateRoute, deleteRoute } from "../controllers/routes.js";
+import {
+  getRoute,
+  getRoutes,
+  createRoute,
+  updateRoute,
+  deleteRoute,
+} from "../../controllers/v1/routes.js";
 
 router.route("/").get(getRoutes).post(createRoute);
 router.route("/:title").put(updateRoute).delete(deleteRoute).get(getRoute);
