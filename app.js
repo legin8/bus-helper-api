@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express, { urlencoded, json } from "express";
 import cors from "cors";
+import helmet from "helmet";
 
 import routes from "./routes/v1/routes.js";
 import services from "./routes/v1/services.js";
@@ -19,6 +20,7 @@ app.use(urlencoded({ extended: false }));
 app.use(json());
 
 app.use(cors());
+app.use(helmet());
 
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/routes`, routes);
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/services`, services);
