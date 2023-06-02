@@ -19,49 +19,57 @@ model Agency {
 }
 
 model Route {
-  title           String    @id @unique
+  title           String
   locations       String
   key             Int       @unique
   agencyCode      String
   agency          Agency    @relation(fields: [agencyCode], references: [code])
   services        Service[]
+  @@id([title, agencyCode])
 }
 
 model Service {
-  code            String    @id @unique
+  code            String
   name            String
   routeTitle      String
   key 	          Int
-  route           Route     @relation(fields: [routeTitle], references: [title])
+  agencyCode      String
+  route           Route     @relation(fields: [routeTitle, agencyCode], references: [title, agencyCode])
   trips           Trip[]
+  @@id([code, agencyCode])
 }
 
 model Trip {
   serviceCode     String
   id              Int
   name            String
-  service         Service @relation(fields: [serviceCode], references: [code])
+  agencyCode      String
+  service         Service @relation(fields: [serviceCode, agencyCode], references: [code, agencyCode])
   times           Times[]
-  @@id([serviceCode, id])
+  @@id([serviceCode, id, agencyCode])
 }
 
 model Times {
   serviceCode      String
   tripId           Int
+  stop             Int
   time             String
   stopsCode        String
-  trip             Trip    @relation(fields: [tripId, serviceCode], references: [id, serviceCode])
+  agencyCode       String
+  trip             Trip    @relation(fields: [serviceCode, tripId, agencyCode], references: [serviceCode, id, agencyCode])
   timeStop         TimesStops[]
-  @@id([serviceCode, tripId])
+  @@id([serviceCode, tripId, agencyCode, stop])
 }
 
 model TimesStops {
   serviceCode     String
   tripId          Int
+  agencyCode      String
+  timeStop        Int
   stopsCode       String
-  time            Times     @relation(fields: [serviceCode, tripId], references: [serviceCode, tripId])
+  time            Times     @relation(fields: [serviceCode, tripId, agencyCode, timeStop], references: [serviceCode, tripId, agencyCode, stop])
   stop            Stops     @relation(fields: [stopsCode], references: [code])
-  @@id([serviceCode, tripId, stopsCode])
+  @@id([serviceCode, tripId, stopsCode, agencyCode])
 }
 
 model Stops {
