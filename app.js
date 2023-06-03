@@ -5,6 +5,7 @@ import helmet from "helmet";
 
 import routes from "./routes/v1/routes.js";
 import services from "./routes/v1/services.js";
+import agencys from "./routes/v1/agencys.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(json());
 app.use(cors());
 app.use(helmet());
 
+app.use(`/${BASE_URL}/${CURRENT_VERSION}/agencys`, agencys);
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/routes`, routes);
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/services`, services);
 
