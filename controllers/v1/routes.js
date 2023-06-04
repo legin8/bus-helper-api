@@ -1,12 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-const routeExample = {
-  title: "33",
-  locations: "Corstorphine, Caversham, Hub, Wakari",
-  key: 1,
-};
-
 export const getRoutes = async (req, res) => {
   try {
     const routes = await prisma.route.findMany({
@@ -18,7 +12,6 @@ export const getRoutes = async (req, res) => {
     if (routes.length === 0) {
       return res.status(200).json({
         msg: "No routes found",
-        example: routeExample,
       });
     }
 
@@ -32,10 +25,10 @@ export const getRoutes = async (req, res) => {
 
 export const createRoute = async (req, res) => {
   try {
-    const { title, locations, key } = req.body;
+    const { title, agencyCode, locations, key } = req.body;
 
     await prisma.route.create({
-      data: { title, locations, key },
+      data: { title, agencyCode, locations, key },
     });
 
     const newRoutes = await prisma.route.findMany({
@@ -58,7 +51,7 @@ export const createRoute = async (req, res) => {
 export const updateRoute = async (req, res) => {
   try {
     const { title } = req.params;
-    const { locations, key } = req.body;
+    const { agencyCode, locations, key } = req.body;
 
     let route = await prisma.route.findUnique({
       where: { title: String(title) },
@@ -72,7 +65,7 @@ export const updateRoute = async (req, res) => {
 
     route = await prisma.route.update({
       where: { title: String(title) },
-      data: { locations, key },
+      data: { agencyCode, locations, key },
     });
 
     return res.json({

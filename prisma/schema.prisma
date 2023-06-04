@@ -20,9 +20,9 @@ model Agency {
 
 model Route {
   title           String
-  locations       String
-  key             Int       @unique
   agencyCode      String
+  locations       String
+  key             Int
   agency          Agency    @relation(fields: [agencyCode], references: [code])
   services        Service[]
   @@id([title, agencyCode])
@@ -30,10 +30,10 @@ model Route {
 
 model Service {
   code            String
-  name            String
-  routeTitle      String
-  key 	          Int
   agencyCode      String
+  routeTitle      String
+  name            String
+  key 	          Int
   route           Route     @relation(fields: [routeTitle, agencyCode], references: [title, agencyCode])
   trips           Trip[]
   @@id([code, agencyCode])
@@ -42,8 +42,8 @@ model Service {
 model Trip {
   serviceCode     String
   id              Int
-  name            String
   agencyCode      String
+  name            String
   service         Service @relation(fields: [serviceCode, agencyCode], references: [code, agencyCode])
   times           Times[]
   @@id([serviceCode, id, agencyCode])
@@ -52,10 +52,10 @@ model Trip {
 model Times {
   serviceCode      String
   tripId           Int
+  agencyCode       String
   stop             Int
   time             String
   stopsCode        String
-  agencyCode       String
   trip             Trip    @relation(fields: [serviceCode, tripId, agencyCode], references: [serviceCode, id, agencyCode])
   timeStop         TimesStops[]
   @@id([serviceCode, tripId, agencyCode, stop])
@@ -64,9 +64,9 @@ model Times {
 model TimesStops {
   serviceCode     String
   tripId          Int
+  stopsCode       String
   agencyCode      String
   timeStop        Int
-  stopsCode       String
   time            Times     @relation(fields: [serviceCode, tripId, agencyCode, timeStop], references: [serviceCode, tripId, agencyCode, stop])
   stop            Stops     @relation(fields: [stopsCode], references: [code])
   @@id([serviceCode, tripId, stopsCode, agencyCode])

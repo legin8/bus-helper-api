@@ -9,9 +9,9 @@ CREATE TABLE "Agency" (
 -- CreateTable
 CREATE TABLE "Route" (
     "title" TEXT NOT NULL,
+    "agencyCode" TEXT NOT NULL,
     "locations" TEXT NOT NULL,
     "key" INTEGER NOT NULL,
-    "agencyCode" TEXT NOT NULL,
 
     PRIMARY KEY ("title", "agencyCode"),
     CONSTRAINT "Route_agencyCode_fkey" FOREIGN KEY ("agencyCode") REFERENCES "Agency" ("code") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -20,10 +20,10 @@ CREATE TABLE "Route" (
 -- CreateTable
 CREATE TABLE "Service" (
     "code" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "routeTitle" TEXT NOT NULL,
-    "key" INTEGER NOT NULL,
     "agencyCode" TEXT NOT NULL,
+    "routeTitle" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "key" INTEGER NOT NULL,
 
     PRIMARY KEY ("code", "agencyCode"),
     CONSTRAINT "Service_routeTitle_agencyCode_fkey" FOREIGN KEY ("routeTitle", "agencyCode") REFERENCES "Route" ("title", "agencyCode") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -33,8 +33,8 @@ CREATE TABLE "Service" (
 CREATE TABLE "Trip" (
     "serviceCode" TEXT NOT NULL,
     "id" INTEGER NOT NULL,
-    "name" TEXT NOT NULL,
     "agencyCode" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
 
     PRIMARY KEY ("serviceCode", "id", "agencyCode"),
     CONSTRAINT "Trip_serviceCode_agencyCode_fkey" FOREIGN KEY ("serviceCode", "agencyCode") REFERENCES "Service" ("code", "agencyCode") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -44,10 +44,10 @@ CREATE TABLE "Trip" (
 CREATE TABLE "Times" (
     "serviceCode" TEXT NOT NULL,
     "tripId" INTEGER NOT NULL,
+    "agencyCode" TEXT NOT NULL,
     "stop" INTEGER NOT NULL,
     "time" TEXT NOT NULL,
     "stopsCode" TEXT NOT NULL,
-    "agencyCode" TEXT NOT NULL,
 
     PRIMARY KEY ("serviceCode", "tripId", "agencyCode", "stop"),
     CONSTRAINT "Times_serviceCode_tripId_agencyCode_fkey" FOREIGN KEY ("serviceCode", "tripId", "agencyCode") REFERENCES "Trip" ("serviceCode", "id", "agencyCode") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -57,9 +57,9 @@ CREATE TABLE "Times" (
 CREATE TABLE "TimesStops" (
     "serviceCode" TEXT NOT NULL,
     "tripId" INTEGER NOT NULL,
+    "stopsCode" TEXT NOT NULL,
     "agencyCode" TEXT NOT NULL,
     "timeStop" INTEGER NOT NULL,
-    "stopsCode" TEXT NOT NULL,
 
     PRIMARY KEY ("serviceCode", "tripId", "stopsCode", "agencyCode"),
     CONSTRAINT "TimesStops_serviceCode_tripId_agencyCode_timeStop_fkey" FOREIGN KEY ("serviceCode", "tripId", "agencyCode", "timeStop") REFERENCES "Times" ("serviceCode", "tripId", "agencyCode", "stop") ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -76,6 +76,3 @@ CREATE TABLE "Stops" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Agency_code_key" ON "Agency"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Route_key_key" ON "Route"("key");
