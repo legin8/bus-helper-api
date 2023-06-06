@@ -27,8 +27,10 @@ export const createAgency = async (req, res) => {
   try {
     const { code, region, url, phone } = req.body;
 
+    const { id } = req.user;
+
     await prisma.agency.create({
-      data: { code, region, url, phone },
+      data: { code, region, url, phone, userId: id },
     });
 
     const newAgencys = await prisma.agency.findMany({
