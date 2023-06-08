@@ -29,6 +29,14 @@ export const createAgency = async (req, res) => {
 
     const { id } = req.user;
 
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+
+    if (user.role !== "ADMIN_USER") {
+      return res.status(403).json({
+        msg: "Not authorized to access this route",
+      });
+    }
+
     await prisma.agency.create({
       data: { code, region, url, phone, userId: id },
     });

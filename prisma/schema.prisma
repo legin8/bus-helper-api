@@ -15,6 +15,7 @@ model User {
   email           String        @unique
   name            String
   password        String
+  role            String
   createdAt       DateTime      @default(now())
 }
 
@@ -87,3 +88,8 @@ model Stops {
   stopAlias       String?
   timeStop        TimesStops[]
 }
+
+// enum Role {
+//   ADMIN_USER
+//   BASIC_USER
+// }
