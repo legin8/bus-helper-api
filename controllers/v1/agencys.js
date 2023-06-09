@@ -63,6 +63,16 @@ export const updateAgency = async (req, res) => {
     const { code } = req.params;
     const { region, url, phone } = req.body;
 
+    const { id } = req.user;
+
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+
+    if (user.role !== "ADMIN_USER") {
+      return res.status(403).json({
+        msg: "Not authorized to access this route",
+      });
+    }
+
     let agency = await prisma.agency.findUnique({
       where: { code: String(code) },
     });
@@ -90,6 +100,16 @@ export const updateAgency = async (req, res) => {
 export const deleteAgency = async (req, res) => {
   try {
     const { code } = req.params;
+
+    const { id } = req.user;
+
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+
+    if (user.role !== "ADMIN_USER") {
+      return res.status(403).json({
+        msg: "Not authorized to access this route",
+      });
+    }
 
     const agency = await prisma.agency.findUnique({
       where: { code: String(code) },

@@ -6,7 +6,7 @@ import compression from "compression";
 import cacheRoute from "./middleware/cacheRoute.js";
 
 import auth from "./routes/v1/auth.js";
-import authRoute from "./middleware/authRoute.js";
+import { authRoute } from "./middleware/authRoute.js";
 import routes from "./routes/v1/routes.js";
 import services from "./routes/v1/services.js";
 import agencys from "./routes/v1/agencys.js";
@@ -32,7 +32,7 @@ app.use(cacheRoute);
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
 
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/agencys`, authRoute, agencys);
-app.use(`/${BASE_URL}/${CURRENT_VERSION}/routes`, routes);
+app.use(`/${BASE_URL}/${CURRENT_VERSION}/routes`, authRoute, routes);
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/services`, services);
 
 app.get(`/${BASE_URL}/${CURRENT_VERSION}/optimisation`, (req, res) => {

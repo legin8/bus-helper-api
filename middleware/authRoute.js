@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const authRoute = (req, res, next) => {
+export const authRoute = (req, res, next) => {
   try {
     /**
      * The authorization request header provides information that authenticates
@@ -45,5 +45,3 @@ const authRoute = (req, res, next) => {
     });
   }
 };
-
-export default authRoute;

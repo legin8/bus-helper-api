@@ -21,6 +21,16 @@ export const createService = async (req, res) => {
   try {
     const { code, name, routeTitle, key } = req.body;
 
+    const { id } = req.user;
+
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+
+    if (user.role !== "ADMIN_USER") {
+      return res.status(403).json({
+        msg: "Not authorized to access this route",
+      });
+    }
+
     await prisma.service.create({
       data: { code, name, routeTitle, key },
     });
@@ -42,6 +52,16 @@ export const updateService = async (req, res) => {
   try {
     const { code } = req.params;
     const { name, routeTitle, key } = req.body;
+
+    const { id } = req.user;
+
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+
+    if (user.role !== "ADMIN_USER") {
+      return res.status(403).json({
+        msg: "Not authorized to access this route",
+      });
+    }
 
     let service = await prisma.service.findUnique({
       where: { code: String(code) },
@@ -72,6 +92,16 @@ export const updateService = async (req, res) => {
 export const deleteService = async (req, res) => {
   try {
     const { code } = req.params;
+
+    const { id } = req.user;
+
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+
+    if (user.role !== "ADMIN_USER") {
+      return res.status(403).json({
+        msg: "Not authorized to access this route",
+      });
+    }
 
     const service = await prisma.service.findUnique({
       where: { code: String(code) },
