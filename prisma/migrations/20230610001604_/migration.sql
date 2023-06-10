@@ -1,4 +1,14 @@
 -- CreateTable
+CREATE TABLE "User" (
+    "userId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "email" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
 CREATE TABLE "Agency" (
     "code" TEXT NOT NULL PRIMARY KEY,
     "region" TEXT NOT NULL,
@@ -73,6 +83,9 @@ CREATE TABLE "Stops" (
     "name" TEXT NOT NULL,
     "stopAlias" TEXT
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Agency_code_key" ON "Agency"("code");

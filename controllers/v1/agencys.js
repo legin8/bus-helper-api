@@ -27,9 +27,9 @@ export const createAgency = async (req, res) => {
   try {
     const { code, region, url, phone } = req.body;
 
-    const { id } = req.user;
+    const { userId } = req.user;
 
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const user = await prisma.user.findUnique({ where: { userId: Number(userId) } });
 
     if (user.role !== "ADMIN_USER") {
       return res.status(403).json({
@@ -38,7 +38,7 @@ export const createAgency = async (req, res) => {
     }
 
     await prisma.agency.create({
-      data: { code, region, url, phone, userId: id },
+      data: { code, region, url, phone, userId: userId },
     });
 
     const newAgencys = await prisma.agency.findMany({
@@ -63,9 +63,9 @@ export const updateAgency = async (req, res) => {
     const { code } = req.params;
     const { region, url, phone } = req.body;
 
-    const { id } = req.user;
+    const { userId } = req.user;
 
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const user = await prisma.user.findUnique({ where: { userId: Number(userId) } });
 
     if (user.role !== "ADMIN_USER") {
       return res.status(403).json({
@@ -101,9 +101,9 @@ export const deleteAgency = async (req, res) => {
   try {
     const { code } = req.params;
 
-    const { id } = req.user;
+    const { userId } = req.user;
 
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const user = await prisma.user.findUnique({ where: { userId: Number(userId) } });
 
     if (user.role !== "ADMIN_USER") {
       return res.status(403).json({

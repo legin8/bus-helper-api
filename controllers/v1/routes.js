@@ -27,9 +27,9 @@ export const createRoute = async (req, res) => {
   try {
     const { title, agencyCode, locations, key } = req.body;
 
-    const { id } = req.user;
+    const { userId } = req.user;
 
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const user = await prisma.user.findUnique({ where: { userId: Number(userId) } });
 
     if (user.role !== "ADMIN_USER") {
       return res.status(403).json({
@@ -63,9 +63,9 @@ export const updateRoute = async (req, res) => {
     const { title } = req.params;
     const { agencyCode, locations, key } = req.body;
 
-    const { id } = req.user;
+    const { userId } = req.user;
 
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const user = await prisma.user.findUnique({ where: { userId: Number(userId) } });
 
     if (user.role !== "ADMIN_USER") {
       return res.status(403).json({
@@ -103,9 +103,9 @@ export const deleteRoute = async (req, res) => {
   try {
     const { title } = req.params;
 
-    const { id } = req.user;
+    const { userId } = req.user;
 
-    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    const user = await prisma.user.findUnique({ where: { userId: Number(userId) } });
 
     if (user.role !== "ADMIN_USER") {
       return res.status(403).json({

@@ -73,12 +73,12 @@ const login = async (req, res) => {
 
     /**
      * Return a JWT. The first argument is the payload, i.e., an object containing
-     * the authenticated user's id and name, the second argument is the secret
+     * the authenticated user's userId and name, the second argument is the secret
      * or public/private key, and the third argument is the lifetime of the JWT
      */
     const token = jwt.sign(
       {
-        id: user.id,
+        userId: user.userId,
         name: user.name,
       },
       JWT_SECRET,
