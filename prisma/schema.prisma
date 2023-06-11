@@ -31,19 +31,19 @@ model Route {
   title           String
   agencyCode      String
   locations       String
-  key             Int
+  isSchoolRun     Boolean   @default(false)
   agency          Agency    @relation(fields: [agencyCode], references: [code])
   services        Service[]
-  @@id([title, agencyCode])
+  @@id([title, agencyCode, isSchoolRun])
 }
 
 model Service {
   code            String
   agencyCode      String
+  isSchoolRun     Boolean   @default(false)
   routeTitle      String
   name            String
-  key 	          Int
-  route           Route     @relation(fields: [routeTitle, agencyCode], references: [title, agencyCode])
+  route           Route     @relation(fields: [routeTitle, agencyCode, isSchoolRun], references: [title, agencyCode, isSchoolRun])
   trips           Trip[]
   @@id([code, agencyCode])
 }
@@ -86,6 +86,8 @@ model Stops {
   id              Int
   name            String
   stopAlias       String?
+  long            String
+  lat             String
   timeStop        TimesStops[]
 }
 

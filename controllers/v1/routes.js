@@ -25,7 +25,7 @@ export const getRoutes = async (req, res) => {
 
 export const createRoute = async (req, res) => {
   try {
-    const { title, agencyCode, locations, key } = req.body;
+    const { title, agencyCode, locations } = req.body;
 
     const { userId } = req.user;
 
@@ -38,7 +38,7 @@ export const createRoute = async (req, res) => {
     }
 
     await prisma.route.create({
-      data: { title, agencyCode, locations, key },
+      data: { title, agencyCode, locations },
     });
 
     const newRoutes = await prisma.route.findMany({
@@ -61,7 +61,7 @@ export const createRoute = async (req, res) => {
 export const updateRoute = async (req, res) => {
   try {
     const { title } = req.params;
-    const { agencyCode, locations, key } = req.body;
+    const { agencyCode, locations } = req.body;
 
     const { userId } = req.user;
 
@@ -85,7 +85,7 @@ export const updateRoute = async (req, res) => {
 
     route = await prisma.route.update({
       where: { title: String(title) },
-      data: { agencyCode, locations, key },
+      data: { agencyCode, locations },
     });
 
     return res.json({
