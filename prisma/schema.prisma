@@ -50,45 +50,44 @@ model Service {
 
 model Trip {
   serviceCode     String
-  id              Int
+  code            Int
   agencyCode      String
   name            String
   service         Service @relation(fields: [serviceCode, agencyCode], references: [code, agencyCode])
-  times           Times[]
-  @@id([serviceCode, id, agencyCode])
+
+  @@id([serviceCode, code, agencyCode])
 }
 
-model Times {
-  serviceCode      String
-  tripId           Int
-  agencyCode       String
-  stop             Int
-  time             String
-  stopsCode        String
-  trip             Trip    @relation(fields: [serviceCode, tripId, agencyCode], references: [serviceCode, id, agencyCode])
-  timeStop         TimesStops[]
-  @@id([serviceCode, tripId, agencyCode, stop])
+model TripRun {
+  tripCode              Int @id
+  runCode               Int
 }
 
-model TimesStops {
-  serviceCode     String
-  tripId          Int
-  stopsCode       String
-  agencyCode      String
-  timeStop        Int
-  time            Times     @relation(fields: [serviceCode, tripId, agencyCode, timeStop], references: [serviceCode, tripId, agencyCode, stop])
-  stop            Stops     @relation(fields: [stopsCode], references: [code])
-  @@id([serviceCode, tripId, stopsCode, agencyCode])
+model Run {
+  code             String
+  version          Int
+  order            Int
+  timeIncrement    Int
+  runStop          RunStop[]
+  @@id([code, version, order])
 }
 
-model Stops {
+model RunStop {
+  runCode         String
+  version         Int
+  order           Int
+  stopCode        String
+  run             Run      @relation(fields: [runCode, version, order], references: [code, version, order])
+  stop            Stop     @relation(fields: [stopCode], references: [code])
+  @@id([runCode, stopCode])
+}
+
+model Stop {
   code            String  @id
-  id              Int
   name            String
-  stopAlias       String?
   long            String
   lat             String
-  timeStop        TimesStops[]
+  runStop        RunStop[]
 }
 
 // enum Role {
