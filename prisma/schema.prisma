@@ -19,6 +19,7 @@ model User {
   createdAt       DateTime      @default(now())
 }
 
+// e.g ORC or QNT
 model Agency {
   code          String    @id @unique
   region        String
@@ -27,6 +28,7 @@ model Agency {
   routes        Route[]
 }
 
+// Each is a collection of services that may or may not share the same number
 model Route {
   title           String
   agencyCode      String
@@ -37,6 +39,7 @@ model Route {
   @@id([title, agencyCode, isSchoolRun])
 }
 
+// Each service refers to a route and goes one way or more.
 model Service {
   code            String
   agencyCode      String
@@ -48,27 +51,37 @@ model Service {
   @@id([code, agencyCode])
 }
 
+// A group of trips is all the bus trips for all days
 model Trip {
   serviceCode     String
   code            Int
   agencyCode      String
   name            String
   service         Service @relation(fields: [serviceCode, agencyCode], references: [code, agencyCode])
-
+  tripRun         TripRun[]
   @@id([serviceCode, code, agencyCode])
 }
 
 model TripRun {
-  tripCode              Int @id
-  runCode               Int
+  serviceCode     String
+  tripCode        Int
+  agencyCode      String
+  runCode         String
+  runVersion      Int
+  runOrder        Int
+  trip            Trip @relation(fields: [serviceCode, tripCode, agencyCode], references: [serviceCode, code, agencyCode])
+  run             Run @relation(fields: [runCode, runVersion, runOrder], references: [code, version, order])
+  @@id([serviceCode, tripCode, agencyCode, runCode, runVersion, runOrder])
 }
 
+// A group of run entrys is 1 Trip, so the bus can have different variations in how it starts and finishes.
 model Run {
   code             String
   version          Int
   order            Int
   timeIncrement    Int
   runStop          RunStop[]
+  tripRun          TripRun[]
   @@id([code, version, order])
 }
 
@@ -79,9 +92,10 @@ model RunStop {
   stopCode        String
   run             Run      @relation(fields: [runCode, version, order], references: [code, version, order])
   stop            Stop     @relation(fields: [stopCode], references: [code])
-  @@id([runCode, stopCode])
+  @@id([runCode, version, order, stopCode])
 }
 
+// A list of bus stops that a run can pick from.
 model Stop {
   code            String  @id
   name            String
@@ -90,6 +104,7 @@ model Stop {
   runStop        RunStop[]
 }
 
+// This will proberly be used, but it can't be used with sqlite
 // enum Role {
 //   ADMIN_USER
 //   BASIC_USER
