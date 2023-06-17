@@ -32,8 +32,8 @@ model Agency {
 model Route {
   title           String
   agencyCode      String
-  locations       String
   isSchoolRun     Boolean   @default(false)
+  locations       String
   agency          Agency    @relation(fields: [agencyCode], references: [code])
   services        Service[]
   @@id([title, agencyCode, isSchoolRun])
@@ -48,30 +48,51 @@ model Service {
   name            String
   route           Route     @relation(fields: [routeTitle, agencyCode, isSchoolRun], references: [title, agencyCode, isSchoolRun])
   trips           Trip[]
-  @@id([code, agencyCode])
+  @@id([code, agencyCode, isSchoolRun])
 }
 
 // A group of trips is all the bus trips for all days
 model Trip {
   serviceCode     String
-  code            Int
   agencyCode      String
-  name            String
-  service         Service @relation(fields: [serviceCode, agencyCode], references: [code, agencyCode])
+  isSchoolRun     Boolean
+  code            Int
+  startTime       DateTime
+  service         Service @relation(fields: [serviceCode, agencyCode, isSchoolRun], references: [code, agencyCode, isSchoolRun])
   tripRun         TripRun[]
-  @@id([serviceCode, code, agencyCode])
+  tripDay         TripDay[]
+  @@id([serviceCode, code, agencyCode, isSchoolRun])
+}
+
+// Connects the trips to the day or days that are associated with it.
+model TripDay {
+  serviceCode     String
+  agencyCode      String
+  isSchoolRun     Boolean
+  tripCode        Int
+  dayCode         String
+  trip            Trip @relation(fields: [serviceCode, agencyCode, isSchoolRun, tripCode], references: [serviceCode, agencyCode, isSchoolRun, code])
+  day             Day @relation(fields: [dayCode], references: [code])
+  @@id([serviceCode, agencyCode, isSchoolRun, tripCode, dayCode])
+}
+
+// holds the day of the week or WD or WE ect that is associated with a trip for the front end to use.
+model Day {
+  code            String @id
+  tripDay         TripDay[]
 }
 
 model TripRun {
   serviceCode     String
   tripCode        Int
   agencyCode      String
+  isSchoolRun     Boolean
   runCode         String
   runVersion      Int
   runOrder        Int
-  trip            Trip @relation(fields: [serviceCode, tripCode, agencyCode], references: [serviceCode, code, agencyCode])
+  trip            Trip @relation(fields: [serviceCode, tripCode, agencyCode, isSchoolRun], references: [serviceCode, code, agencyCode, isSchoolRun])
   run             Run @relation(fields: [runCode, runVersion, runOrder], references: [code, version, order])
-  @@id([serviceCode, tripCode, agencyCode, runCode, runVersion, runOrder])
+  @@id([serviceCode, tripCode, agencyCode, isSchoolRun, runCode, runVersion, runOrder])
 }
 
 // A group of run entrys is 1 Trip, so the bus can have different variations in how it starts and finishes.
@@ -99,8 +120,8 @@ model RunStop {
 model Stop {
   code            String  @id
   name            String
-  long            String
   lat             String
+  long            String
   runStop        RunStop[]
 }
 
