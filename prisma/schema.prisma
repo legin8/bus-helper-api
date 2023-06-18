@@ -73,7 +73,7 @@ model TripDay {
   dayCode         String
   trip            Trip @relation(fields: [serviceCode, agencyCode, isSchoolRun, tripCode], references: [serviceCode, agencyCode, isSchoolRun, code])
   day             Day @relation(fields: [dayCode], references: [code])
-  @@id([serviceCode, agencyCode, isSchoolRun, tripCode, dayCode])
+  @@unique([serviceCode, agencyCode, isSchoolRun, tripCode, dayCode])
 }
 
 // holds the day of the week or WD or WE ect that is associated with a trip for the front end to use.
@@ -92,7 +92,7 @@ model TripRun {
   runOrder        Int
   trip            Trip @relation(fields: [serviceCode, tripCode, agencyCode, isSchoolRun], references: [serviceCode, code, agencyCode, isSchoolRun])
   run             Run @relation(fields: [runCode, runVersion, runOrder], references: [code, version, order])
-  @@id([serviceCode, tripCode, agencyCode, isSchoolRun, runCode, runVersion, runOrder])
+  @@unique([serviceCode, tripCode, agencyCode, isSchoolRun, runCode, runVersion, runOrder])
 }
 
 // A group of run entrys is 1 Trip, so the bus can have different variations in how it starts and finishes.
@@ -113,7 +113,7 @@ model RunStop {
   stopCode        String
   run             Run      @relation(fields: [runCode, version, order], references: [code, version, order])
   stop            Stop     @relation(fields: [stopCode], references: [code])
-  @@id([runCode, version, order, stopCode])
+  @@unique([runCode, version, order, stopCode])
 }
 
 // A list of bus stops that a run can pick from.
