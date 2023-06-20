@@ -30,50 +30,42 @@ model Agency {
 
 // Each is a collection of services that may or may not share the same number
 model Route {
-  title           String
-  agencyCode      String
+  id              Int       @id @default(autoincrement())
+  agencyCode      String       // ORC or QNT also refers to the agency table
+  title           String      // 33 or 37/38
   isSchoolRun     Boolean   @default(false)
-  locations       String
+  locations       String 
   agency          Agency    @relation(fields: [agencyCode], references: [code])
   services        Service[]
-  @@id([title, agencyCode, isSchoolRun])
 }
 
 // Each service refers to a route and goes one way or more.
 model Service {
-  code            String
-  agencyCode      String
-  isSchoolRun     Boolean   @default(false)
-  routeTitle      String
-  name            String
-  route           Route     @relation(fields: [routeTitle, agencyCode, isSchoolRun], references: [title, agencyCode, isSchoolRun])
+  id              Int       @id @default(autoincrement())
+  routeId         Int         // refers to the route table
+  code            String      // 33A or 37
+  name            String      // Corstorphine to Helen
+  route           Route     @relation(fields: [routeId], references: [id])
   trips           Trip[]
-  @@id([code, agencyCode, isSchoolRun])
 }
 
 // A group of trips is all the bus trips for all days
 model Trip {
-  serviceCode     String
-  agencyCode      String
-  isSchoolRun     Boolean
-  code            Int
-  startTime       DateTime
-  service         Service @relation(fields: [serviceCode, agencyCode, isSchoolRun], references: [code, agencyCode, isSchoolRun])
-  tripRun         TripRun[]
-  tripDay         TripDay[]
-  @@id([serviceCode, code, agencyCode, isSchoolRun])
+  id              Int       @id @default(autoincrement())
+  serviceId       Int           // refers to the service table
+  startTime       DateTime      // This is the start time that will be incremented
+  service         Service @relation(fields: [serviceId], references: [id])
+  tripRun         Sequence[]    // This is the sequence of places the bus goes this trip
+  tripDay         TripDay[]     // One trip and be for 1 or more days
 }
 
 // Connects the trips to the day or days that are associated with it.
 model TripDay {
-  serviceCode     String
-  agencyCode      String
-  isSchoolRun     Boolean
-  tripCode        Int
+  tripId          Int
   dayCode         String
-  trip            Trip @relation(fields: [serviceCode, agencyCode, isSchoolRun, tripCode], references: [serviceCode, agencyCode, isSchoolRun, code])
+  trip            Trip @relation(fields: [tripId], references: [id])
   day             Day @relation(fields: [dayCode], references: [code])
-  @@unique([serviceCode, agencyCode, isSchoolRun, tripCode, dayCode])
+  @@unique([tripId, dayCode])
 }
 
 // holds the day of the week or WD or WE ect that is associated with a trip for the front end to use.
@@ -82,38 +74,24 @@ model Day {
   tripDay         TripDay[]
 }
 
-model TripRun {
-  serviceCode     String
-  tripCode        Int
-  agencyCode      String
-  isSchoolRun     Boolean
-  runCode         String
-  runVersion      Int
-  runOrder        Int
-  trip            Trip @relation(fields: [serviceCode, tripCode, agencyCode, isSchoolRun], references: [serviceCode, code, agencyCode, isSchoolRun])
-  run             Run @relation(fields: [runCode, runVersion, runOrder], references: [code, version, order])
-  @@unique([serviceCode, tripCode, agencyCode, isSchoolRun, runCode, runVersion, runOrder])
-}
-
 // A group of run entrys is 1 Trip, so the bus can have different variations in how it starts and finishes.
-model Run {
-  code             String
+model Sequence {
+  tripId           Int
   version          Int
-  order            Int
-  timeIncrement    Int
-  runStop          RunStop[]
-  tripRun          TripRun[]
-  @@id([code, version, order])
+  trip             Trip @relation(fields: [tripId], references: [id])
+  runStop          SequenceStop[]
+  @@id([tripId, version])
 }
 
-model RunStop {
-  runCode         String
+model SequenceStop {
+  tripId          Int
   version         Int
   order           Int
+  timeIncrement   Int
   stopCode        String
-  run             Run      @relation(fields: [runCode, version, order], references: [code, version, order])
+  run             Sequence      @relation(fields: [tripId, version], references: [tripId, version])
   stop            Stop     @relation(fields: [stopCode], references: [code])
-  @@unique([runCode, version, order, stopCode])
+  @@unique([tripId, version, order, timeIncrement, stopCode])
 }
 
 // A list of bus stops that a run can pick from.
@@ -122,7 +100,7 @@ model Stop {
   name            String
   lat             String
   long            String
-  runStop        RunStop[]
+  runStop        SequenceStop[]
 }
 
 // This will proberly be used, but it can't be used with sqlite
