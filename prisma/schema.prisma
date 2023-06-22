@@ -54,8 +54,8 @@ model Trip {
   id              Int       @id @default(autoincrement())
   serviceId       Int           // refers to the service table
   startTime       DateTime      // This is the start time that will be incremented
-  service         Service @relation(fields: [serviceId], references: [id])
-  tripRun         Sequence[]    // This is the sequence of places the bus goes this trip
+  service         Service    @relation(fields: [serviceId], references: [id])
+  tripSequence    TripSequence[]
   tripDay         TripDay[]     // One trip and be for 1 or more days
 }
 
@@ -74,24 +74,34 @@ model Day {
   tripDay         TripDay[]
 }
 
-// A group of run entrys is 1 Trip, so the bus can have different variations in how it starts and finishes.
-model Sequence {
-  tripId           Int
-  version          Int
-  trip             Trip @relation(fields: [tripId], references: [id])
-  runStop          SequenceStop[]
-  @@id([tripId, version])
+model TripSequence {
+  tripId          Int
+  serviceCode     String    // 33A or 50A
+  version         Int       // 1 or 2
+  trip            Trip @relation(fields: [tripId], references: [id])
+  sequence        Sequence @relation(fields: [serviceCode, version], references: [serviceCode, version])
+  @@unique([tripId])
 }
 
+// A group of run entrys is 1 Trip, so the bus can have different variations in how it starts and finishes.
+model Sequence {
+  serviceCode      String
+  version          Int
+  tripSequence     TripSequence[]
+  runStop          SequenceStop[]
+  @@id([serviceCode, version])
+}
+
+// A group of sequenceStops is the order of this bus run and can be reused
 model SequenceStop {
-  tripId          Int
+  serviceCode     String
   version         Int
   order           Int
   timeIncrement   Int
   stopCode        String
-  run             Sequence      @relation(fields: [tripId, version], references: [tripId, version])
+  run             Sequence      @relation(fields: [serviceCode, version], references: [serviceCode, version])
   stop            Stop     @relation(fields: [stopCode], references: [code])
-  @@unique([tripId, version, order, timeIncrement, stopCode])
+  @@unique([serviceCode, version, order, timeIncrement, stopCode])
 }
 
 // A list of bus stops that a run can pick from.

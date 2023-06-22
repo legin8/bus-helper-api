@@ -57,22 +57,30 @@ CREATE TABLE "Day" (
 );
 
 -- CreateTable
-CREATE TABLE "Sequence" (
+CREATE TABLE "TripSequence" (
     "tripId" INTEGER NOT NULL,
+    "serviceCode" TEXT NOT NULL,
+    "version" INTEGER NOT NULL,
+    CONSTRAINT "TripSequence_tripId_fkey" FOREIGN KEY ("tripId") REFERENCES "Trip" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "TripSequence_serviceCode_version_fkey" FOREIGN KEY ("serviceCode", "version") REFERENCES "Sequence" ("serviceCode", "version") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Sequence" (
+    "serviceCode" TEXT NOT NULL,
     "version" INTEGER NOT NULL,
 
-    PRIMARY KEY ("tripId", "version"),
-    CONSTRAINT "Sequence_tripId_fkey" FOREIGN KEY ("tripId") REFERENCES "Trip" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    PRIMARY KEY ("serviceCode", "version")
 );
 
 -- CreateTable
 CREATE TABLE "SequenceStop" (
-    "tripId" INTEGER NOT NULL,
+    "serviceCode" TEXT NOT NULL,
     "version" INTEGER NOT NULL,
     "order" INTEGER NOT NULL,
     "timeIncrement" INTEGER NOT NULL,
     "stopCode" TEXT NOT NULL,
-    CONSTRAINT "SequenceStop_tripId_version_fkey" FOREIGN KEY ("tripId", "version") REFERENCES "Sequence" ("tripId", "version") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "SequenceStop_serviceCode_version_fkey" FOREIGN KEY ("serviceCode", "version") REFERENCES "Sequence" ("serviceCode", "version") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "SequenceStop_stopCode_fkey" FOREIGN KEY ("stopCode") REFERENCES "Stop" ("code") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -94,4 +102,7 @@ CREATE UNIQUE INDEX "Agency_code_key" ON "Agency"("code");
 CREATE UNIQUE INDEX "TripDay_tripId_dayCode_key" ON "TripDay"("tripId", "dayCode");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SequenceStop_tripId_version_order_timeIncrement_stopCode_key" ON "SequenceStop"("tripId", "version", "order", "timeIncrement", "stopCode");
+CREATE UNIQUE INDEX "TripSequence_tripId_key" ON "TripSequence"("tripId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SequenceStop_serviceCode_version_order_timeIncrement_stopCode_key" ON "SequenceStop"("serviceCode", "version", "order", "timeIncrement", "stopCode");
