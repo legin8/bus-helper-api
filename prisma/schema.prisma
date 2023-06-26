@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,8 +15,13 @@ model User {
   email           String        @unique
   name            String
   password        String
-  role            String
+  role            Role          @default(ADMIN_USER)
   createdAt       DateTime      @default(now())
+}
+
+enum Role {
+  ADMIN_USER
+  BASIC_USER
 }
 
 // e.g ORC or QNT
@@ -62,16 +67,22 @@ model Trip {
 // Connects the trips to the day or days that are associated with it.
 model TripDay {
   tripId          Int
-  dayCode         String
+  day             Day
   trip            Trip @relation(fields: [tripId], references: [id])
-  day             Day @relation(fields: [dayCode], references: [code])
-  @@unique([tripId, dayCode])
+  @@unique([tripId, day])
 }
 
-// holds the day of the week or WD or WE ect that is associated with a trip for the front end to use.
-model Day {
-  code            String @id
-  tripDay         TripDay[]
+enum Day {
+  DAILY
+  WD
+  WE
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
 }
 
 model TripSequence {
@@ -112,9 +123,3 @@ model Stop {
   long            String
   runStop        SequenceStop[]
 }
-
-// This will proberly be used, but it can't be used with sqlite
-// enum Role {
-//   ADMIN_USER
-//   BASIC_USER
-// }

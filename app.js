@@ -10,6 +10,7 @@ import { authRoute } from "./middleware/authRoute.js";
 import routes from "./routes/v1/routes.js";
 import services from "./routes/v1/services.js";
 import agencys from "./routes/v1/agencys.js";
+import stops from "./routes/v1/stops.js";
 
 dotenv.config();
 
@@ -33,7 +34,8 @@ app.use(`/${BASE_URL}/${CURRENT_VERSION}/auth`, auth);
 
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/agencys`, authRoute, agencys);
 app.use(`/${BASE_URL}/${CURRENT_VERSION}/routes`, authRoute, routes);
-app.use(`/${BASE_URL}/${CURRENT_VERSION}/services`, services);
+app.use(`/${BASE_URL}/${CURRENT_VERSION}/services`, authRoute, services);
+app.use(`/${BASE_URL}/${CURRENT_VERSION}/stops`, authRoute, stops);
 
 app.get(`/${BASE_URL}/${CURRENT_VERSION}/optimisation`, (req, res) => {
   const text = "See you later, alligator. Bye bye bye, butterfly";
