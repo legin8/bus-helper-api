@@ -34,14 +34,10 @@ export const createStop = async (req, res) => {
     }
 
     await prisma.stop.create({
-      data: { code, name, lat, long, userId: userId },
+      data: { code, name, lat, long },
     });
 
-    const newStops = await prisma.stop.findMany({
-      include: {
-        routes: true,
-      },
-    });
+    const newStops = await prisma.stop.findMany();
 
     return res.status(201).json({
       msg: "Stop successfully created",
