@@ -40,7 +40,7 @@ model Route {
   title           String      // 33 or 37/38
   isSchoolRun     Boolean   @default(false)
   locations       String 
-  agency          Agency    @relation(fields: [agencyCode], references: [code])
+  agency          Agency    @relation(fields: [agencyCode], references: [code], onUpdate: Cascade, onDelete: Restrict)
   services        Service[]
 }
 
@@ -50,7 +50,7 @@ model Service {
   routeId         Int         // refers to the route table
   code            String      // 33A or 37
   name            String      // Corstorphine to Helen
-  route           Route     @relation(fields: [routeId], references: [id])
+  route           Route     @relation(fields: [routeId], references: [id], onUpdate: Cascade, onDelete: Restrict)
   trips           Trip[]
 }
 
@@ -59,7 +59,7 @@ model Trip {
   id              Int       @id @default(autoincrement())
   serviceId       Int           // refers to the service table
   startTime       DateTime      // This is the start time that will be incremented
-  service         Service    @relation(fields: [serviceId], references: [id])
+  service         Service    @relation(fields: [serviceId], references: [id], onUpdate: Cascade, onDelete: Restrict)
   tripSequence    TripSequence[]
   tripDay         TripDay[]     // One trip and be for 1 or more days
 }
@@ -68,7 +68,7 @@ model Trip {
 model TripDay {
   tripId          Int
   day             Day
-  trip            Trip @relation(fields: [tripId], references: [id])
+  trip            Trip @relation(fields: [tripId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   @@unique([tripId, day])
 }
 
@@ -89,8 +89,8 @@ model TripSequence {
   tripId          Int
   serviceCode     String    // 33A or 50A
   version         Int       // 1 or 2
-  trip            Trip @relation(fields: [tripId], references: [id])
-  sequence        Sequence @relation(fields: [serviceCode, version], references: [serviceCode, version])
+  trip            Trip @relation(fields: [tripId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  sequence        Sequence @relation(fields: [serviceCode, version], references: [serviceCode, version], onUpdate: Cascade, onDelete: Restrict)
   @@unique([tripId])
 }
 
@@ -110,8 +110,8 @@ model SequenceStop {
   order           Int
   timeIncrement   Int
   stopCode        String
-  run             Sequence      @relation(fields: [serviceCode, version], references: [serviceCode, version])
-  stop            Stop     @relation(fields: [stopCode], references: [code])
+  run             Sequence      @relation(fields: [serviceCode, version], references: [serviceCode, version], onUpdate: Cascade, onDelete: Cascade)
+  stop            Stop     @relation(fields: [stopCode], references: [code], onUpdate: Cascade, onDelete: Restrict)
   @@unique([serviceCode, version, order, timeIncrement, stopCode])
 }
 
