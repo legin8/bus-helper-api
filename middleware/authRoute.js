@@ -19,6 +19,7 @@ export const authRoute = (req, res, next) => {
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(403).json({
         msg: "No token provided",
+        can: "no go",
       });
     }
 
