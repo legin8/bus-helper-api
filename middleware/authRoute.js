@@ -10,6 +10,7 @@ export const authRoute = (req, res, next) => {
      * like Google Chrome
      */
     const authHeader = req.headers.authorization;
+    console.log(authHeader);
 
     /**
      * A bearer token will look something like this - Bearer <JWT>. A
