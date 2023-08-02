@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 
 export const authRoute = (req, res, next) => {
   try {
+    console.log(req);
+    console.log(res);
     /**
      * The authorization request header provides information that authenticates
      * a user agent with a server, allowing access to a protected resource. The
